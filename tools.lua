@@ -50,11 +50,6 @@ function vec2_mt:__tostring()
   return "{"..self.x..","..self.y.."}"
 end
 
-function vec2_mt:set(_x, _y)
-  self.x = _x
-  self.y = _y
-end
-
 function is_vec2(_o)
   return getmetatable(_o) == vec2_mt
 end
