@@ -21,6 +21,7 @@ mouse={
 selection_start=nil
 hovered_agents={}
 selected_agents={}
+level=nil
 
 --AGENT ACTIONS
 function agent_goto(_agent,_target,_speed)
@@ -61,14 +62,23 @@ function agent_wait(_agent,_time)
 end
 
 -- SYSTEM
-local test={68,-2,12,4,-1,2,67,2,45,0,7}
 function _init()
   printh("")
   printh("-----INIT-----")
 
-  for i=1,agent_count do
-    local _a=agent(i,rnd_screenpos(30))
-    add(agents,_a)
+  -- create level
+  level=graph(0,0,16,16,0x1)
+
+  -- spawn point
+  for _n in all(level.nodes) do
+    if _n.sprite==3 then
+      local _world_pos=_n.pos*8
+      add(agents,agent(1,_world_pos+vec2(3,3)))
+      add(agents,agent(2,_world_pos+vec2(6,3)))
+      add(agents,agent(3,_world_pos+vec2(6,6)))
+      add(agents,agent(4,_world_pos+vec2(3,6)))
+      break
+    end
   end
 end
 
@@ -154,6 +164,9 @@ end
 function _draw()
   local _bg_color=5
   cls(_bg_color)
+
+  map(level.x,level.y,0,0,level.w,level.h,0x1)
+  -- graph_draw_links(level)
   
   foreach (hovered_agents, function(_agent)
     local _x,_y=_agent.pos.x,_agent.pos.y
