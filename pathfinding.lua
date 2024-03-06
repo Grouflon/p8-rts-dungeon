@@ -91,13 +91,30 @@ function graph_draw_links(_graph)
   end
 end
 
+function is_line_walkable(_graph, _start, _end, _subgraph) -- add radius?
+    local _traj = _end-_start
+    local _dir = vec2_normalized(_traj)
+    local _len = vec2_len(_traj)
+    local _step=4
+    local _progress=0
+    while _progress < _len do
+      _progress=min(_len,_progress+_step)
+      local _p = _start+_dir*_progress
+      -- pset(_p.x, _p.y, 13)
+      local _n= graph_get_node(_graph, _p)
+      if (_n.subgraph ~= _subgraph) return false
+    end
+    return true
+  end
+
 function find_path(_graph, _start, _end)
   local _start_node = graph_get_node(_graph, _start)
   local _end_node = graph_get_node(_graph, _end)
+  local _subgraph = _start_node.subgraph
   assert(_start_node~=nil)
   assert(_end_node~=nil)
-  if (_start_node.subgraph ~= _end_node.subgraph) return nil
-  if (_start_node.subgraph < 0) return nil
+  if (_subgraph ~= _end_node.subgraph) return nil
+  if (_subgraph < 0) return nil
   if (_start_node == _end_node) return {_start,_end}
 
   for _n in all(_graph.nodes) do
@@ -136,6 +153,17 @@ function find_path(_graph, _start, _end)
   until (_n==nil)
   _result[1]=_start
   _result[#_result]=_end
+
+  local _checkpoint=_result[1]
+  local _i=2
+  while _i<#_result do
+    if is_line_walkable(_graph, _checkpoint, _result[_i+1], _subgraph) then
+      deli(_result,_i)
+    else
+      _checkpoint = _result[_i]
+      _i+=1
+    end
+  end
 
   return _result
 end

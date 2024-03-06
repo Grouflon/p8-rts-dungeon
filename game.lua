@@ -3,7 +3,7 @@ skin_color={4,15}
 clothes_color={2,3,8,10,11,12,14}
 
 agent_count=4
-order_speed=0.3
+order_speed=0.4
 
 --variables
 agents={}
@@ -36,6 +36,30 @@ function agent_goto(_agent,_target,_speed)
     end
   }
   action_start(_goto_action,_agent,_target,_speed)
+end
+
+function agent_follow_path(_agent,_path,_speed)
+  local _goto_action={
+    start=function(_action,_path,_speed)
+      local _dist=0
+      for _i=1,#_path-1 do
+        local _start, _end = _path[_i], _path[_i+1]
+        assert(_start ~= nil)
+        assert(_end ~= nil)
+        local _traj=_end-_start
+        local _len=vec2_len(_traj)
+        local _dir=vec2_normalized(_traj)
+        while _dist < _len do
+          _agent.pos=_start+_dir*_dist
+          yield()
+          _dist+=_speed
+        end
+        _dist-=_len
+      end
+      _agent.pos=_path[#_path]
+    end
+  }
+  action_start(_goto_action,_agent,_path,_speed)
 end
 
 function agent_wait(_agent,_time)
@@ -110,11 +134,14 @@ function _update60()
 
   -- orders
   if (mouse.pressed[2]) then
-    foreach(selected_agents, function(_agent)
+    for _agent in all(selected_agents) do
       agent_stop_actions(_agent)
-      agent_goto(_agent,mouse.pos,order_speed)
-      sfx(0)
-    end)
+      path = find_path(level, _agent.pos, mouse.pos)
+      if path ~= nil then
+        agent_follow_path(_agent, path, order_speed)
+        sfx(0)
+      end
+    end
   end
 
   mine_update()
@@ -127,11 +154,7 @@ function _update60()
   -- agents
   foreach(agents,agent_update)
 
-  if #selected_agents>0 then
-    path = find_path(level, selected_agents[1].pos, mouse.pos)
-  else
-    path = nil
-  end
+  
 end
 
 function _draw()
@@ -139,7 +162,7 @@ function _draw()
   cls(_bg_color)
 
   map(level.x,level.y,0,0,level.w,level.h,0x1)
-  graph_draw_links(level)
+  -- graph_draw_links(level)
 
 
   -- mine
@@ -155,10 +178,16 @@ function _draw()
   -- debug
   draw_log()
 
-  if path~=nil then
-    for i=1,#path-1 do
-      local _p0, _p1 = path[i], path[i+1]
-      line(_p0.x, _p0.y, _p1.x, _p1.y, 12)
-    end
-  end
+  -- if #selected_agents>0 then
+  --   path = find_path(level, selected_agents[1].pos, mouse.pos)
+  -- else
+  --   path = nil
+  -- end
+
+  -- if path~=nil then
+  --   for i=1,#path-1 do
+  --     local _p0, _p1 = path[i], path[i+1]
+  --     line(_p0.x, _p0.y, _p1.x, _p1.y, 12)
+  --   end
+  -- end
 end
