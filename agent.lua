@@ -48,7 +48,7 @@ function agent_draw(_a)
   pset(_a.pos.x+1,_a.pos.y,1)
 end
 
-function agent_over_draw(_a)
+function agent_hover_draw(_a)
   local _x,_y=_a.pos.x,_a.pos.y
   local _c=6
   if (mouse.down[1]) _c=7

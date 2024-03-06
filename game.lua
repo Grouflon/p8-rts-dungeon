@@ -84,7 +84,7 @@ function _update60()
     local _agent=agents[_i]
     local _agent_aabb=agent_aabb(_agent,4)
 
-    if col_aabb_aabb(selection_aabb,_agent_aabb) then
+    if col_aabb_aabb(mouse.selection_aabb,_agent_aabb) then
       add(_selectable,_agent)
     end
   end
@@ -99,7 +99,7 @@ function _update60()
 
   hovered_agents=_selectable
   if (mouse.released[1]) then
-    if (#_selectable>0 and is_mouse_moved()) then -- single click
+    if (#_selectable>0 and not mouse_is_box_selecting()) then -- single click
       selected_agents={_selectable[1]}
     else -- drag click or empty click
       selected_agents=_selectable
@@ -139,7 +139,7 @@ function _draw()
 
   -- agents
   foreach(agents, agent_draw)
-  foreach (hovered_agents, agent_over_draw)
+  foreach (hovered_agents, agent_hover_draw)
   foreach (selected_agents, agent_selected_draw)
 
   mouse_draw()
