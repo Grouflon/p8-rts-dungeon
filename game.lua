@@ -97,13 +97,15 @@ function _update60()
     return 0
   end)
 
-  hovered_agents=_selectable
-  if (mouse.released[1]) then
-    if (#_selectable>0 and not mouse_is_box_selecting()) then -- single click
-      selected_agents={_selectable[1]}
-    else -- drag click or empty click
-      selected_agents=_selectable
+  if #_selectable>0 then
+    if mouse_is_box_selecting() then
+      hovered_agents=_selectable
+    else
+      hovered_agents={_selectable[1]}
     end
+  end
+  if mouse.released[1] then
+    selected_agents=hovered_agents
   end
 
   -- orders
@@ -138,7 +140,7 @@ function _draw()
   mine_draw()
 
   -- agents
-  foreach(agents, agent_draw)
+  foreach (agents, agent_draw)
   foreach (hovered_agents, agent_hover_draw)
   foreach (selected_agents, agent_selected_draw)
 
