@@ -62,11 +62,11 @@ function _init()
   -- spawn point
   for _n in all(level.nodes) do
     if _n.sprite==3 then
-      local _world_pos=_n.pos*8
-      add(agents,agent(1,_world_pos+vec2(3,3)))
-      add(agents,agent(2,_world_pos+vec2(6,3)))
-      add(agents,agent(3,_world_pos+vec2(6,6)))
-      add(agents,agent(4,_world_pos+vec2(3,6)))
+      local _world_pos=_n.pos
+      add(agents,agent(1,_world_pos+vec2(-1,-1)))
+      add(agents,agent(2,_world_pos+vec2(2,-1)))
+      add(agents,agent(3,_world_pos+vec2(2,2)))
+      add(agents,agent(4,_world_pos+vec2(-1,2)))
       break
     end
   end
@@ -126,6 +126,12 @@ function _update60()
   
   -- agents
   foreach(agents,agent_update)
+
+  if #selected_agents>0 then
+    path = find_path(level, selected_agents[1].pos, mouse.pos)
+  else
+    path = nil
+  end
 end
 
 function _draw()
@@ -133,7 +139,7 @@ function _draw()
   cls(_bg_color)
 
   map(level.x,level.y,0,0,level.w,level.h,0x1)
-  -- graph_draw_links(level)
+  graph_draw_links(level)
 
 
   -- mine
@@ -148,4 +154,11 @@ function _draw()
 
   -- debug
   draw_log()
+
+  if path~=nil then
+    for i=1,#path-1 do
+      local _p0, _p1 = path[i], path[i+1]
+      line(_p0.x, _p0.y, _p1.x, _p1.y, 12)
+    end
+  end
 end

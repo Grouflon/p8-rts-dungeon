@@ -17,7 +17,7 @@ function graph(_map_x,_map_y,_w,_h,_wall_flags)
       add(_graph.nodes, {
         index=_y*_w+_x+1,
         subgraph=-1,
-        pos=vec2(_x,_y),
+        pos=vec2(_x*8+4,_y*8+4),
         sprite=mget(_map_x+_x,_map_y+_y),
         links={},
       })
@@ -70,15 +70,16 @@ function graph(_map_x,_map_y,_w,_h,_wall_flags)
   return _graph
 end
 
-function graph_get_node(_graph,_x,_y)
-  return _graph.nodes[_y*_graph.w+_x+1]
+function graph_get_node(_graph, _pos)
+  local _clamped_x, _clamped_y = flr(mid(_pos.x/8, 0, _graph.w-1)), flr(mid(_pos.y/8, 0, _graph.h-1))
+  return _graph.nodes[_clamped_y*_graph.w+_clamped_x+1]
 end
 
 function graph_node_draw_links(_node)
   local _color = {8,9,10,11,12,13,14,15}
-  local _n_origin = _node.pos*8+vec2(4,4)
+  local _n_origin = _node.pos
   for _l in all(_node.links) do
-    local _l_origin = _l.pos*8+vec2(4,4)
+    local _l_origin = _l.pos
     local _c = _color[(_l.subgraph%#_color)+1]
     line(_n_origin.x, _n_origin.y, _l_origin.x, _l_origin.y, _c)
   end
@@ -90,7 +91,54 @@ function graph_draw_links(_graph)
   end
 end
 
+function find_path(_graph, _start, _end)
+  local _start_node = graph_get_node(_graph, _start)
+  local _end_node = graph_get_node(_graph, _end)
+  assert(_start_node~=nil)
+  assert(_end_node~=nil)
+  if (_start_node.subgraph ~= _end_node.subgraph) return nil
+  if (_start_node.subgraph < 0) return nil
+  if (_start_node == _end_node) return {_start,_end}
 
+  for _n in all(_graph.nodes) do
+    _n.cost = 9999
+    _n.prev = nil
+  end
+
+  local _open_list={_start_node}
+  _start_node.cost=0
+  while(_open_list[1]~=_end_node) do
+    local _n = _open_list[1]
+    deli(_open_list,1)
+
+    for _l in all(_n.links) do
+      local _cost = _n.cost+8
+      if _cost < _l.cost then
+        _l.cost = _cost
+        _l.h=_cost+vec2_len(_end_node.pos-_l.pos)
+        _l.prev=_n
+        add(_open_list,_l)
+      end
+    end
+
+    sort(_open_list, function(_a,_b)
+      if (_a.h<_b.h) return -1
+      if (_a.h>_b.h) return 1
+      return 0
+    end)
+  end
+
+  local _result = {}
+  local _n=_end_node
+  repeat
+    _result[_n.cost/8+1]=_n.pos
+    _n=_n.prev
+  until (_n==nil)
+  _result[1]=_start
+  _result[#_result]=_end
+
+  return _result
+end
 
 
 
