@@ -2,7 +2,7 @@ pico-8 cartridge // http://www.pico-8.com
 version 41
 __lua__
 #include tools.lua
-#include mouse_event.lua
+#include mouse.lua
 #include pathfinding.lua
 #include entities/mine.lua
 #include agent.lua
