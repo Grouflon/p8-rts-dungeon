@@ -16,7 +16,6 @@ return _a
 end
 
 --AGENT ACTIONS
---AGENT ACTIONS
 function agent_goto(_agent,_target,_speed)
   local _goto_action={
     start=function(_action,_target,_speed)
@@ -95,15 +94,61 @@ function agent_aabb(_a,_margin)
   }
 end
 
+function agents_collision()
+  local _selectable={}
+
+  for _i=1,#agents do
+    local _agent=agents[_i]
+    local _agent_aabb=agent_aabb(_agent,4)
+
+    if col_aabb_aabb(mouse.selection_aabb,_agent_aabb) then
+      add(_selectable,_agent)
+    end
+  end
+  -- sort by distance to the mouse
+  sort(_selectable, function(_a, _b)
+    local _a_dist=vec2_sqrlen(mouse.pos-_a.pos)
+    local _b_dist=vec2_sqrlen(mouse.pos-_b.pos)
+    if (_a_dist<_b_dist) return -1
+    if (_a_dist>_b_dist) return 1
+    return 0
+  end)
+
+  if #_selectable>0 then
+    if mouse_is_box_selecting() then
+      apply(hovered_agents,_selectable)
+    else
+      apply(hovered_agents,{_selectable[1]})
+    end
+  end
+  if mouse.released[1] then
+    apply(selected_agents,hovered_agents)
+  end
+end
+
+function agents_update()
+  -- orders
+  if (mouse.pressed[2]) then
+    for _agent in all(selected_agents) do
+      agent_stop_actions(_agent)
+      path = find_path(level, _agent.pos, mouse.pos)
+      if path ~= nil then
+        agent_follow_path(_agent, path, order_speed)
+        sfx(0)
+      end
+    end
+  end
+
+  -- actions
+  for i=#actions,1,-1 do
+    action_update(actions[i])
+  end
+
+  -- agents
+  foreach(agents,agent_update)
+end
+
 function agent_update(_a)
--- if (#_a.actions==0) then
---  if (_a.mode==0) then
---      agent_wait(_a,rnd_range(wait_range[1],wait_range[2]))
---  else
---      agent_goto(_a,rnd_screenpos(30))
---  end
---  _a.mode=(_a.mode+1)%2
--- end
 end
 
 function agent_draw(_a)

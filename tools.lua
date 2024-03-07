@@ -167,3 +167,28 @@ function contains(_t,_o)
   end
   return false
 end
+
+function clear(_t)
+  for i=#_t,1,-1 do
+    del(_t,_t[i])
+  end
+end
+
+function apply(_t,_t2)
+  clear(_t)
+  for _element in all(_t2) do
+    add(_t,_element)
+  end
+end
+
+--
+function arrow_function(func,a,b)
+  return function() func(a,b) end
+end
+
+
+function do_funcs(_t)
+  for _func in all(_t) do
+    _func()
+  end
+end

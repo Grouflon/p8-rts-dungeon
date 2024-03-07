@@ -13,6 +13,13 @@ hovered_agents={}
 selected_agents={}
 level=nil
 
+collisions={}
+
+updates={}
+
+draw_entities={}
+draw_hovers={}
+draw_selections={}
 
 -- SYSTEM
 function _init()
@@ -33,67 +40,26 @@ function _init()
       break
     end
   end
+
+  add(collisions, agents_collision)
+
+  add(updates, agents_update)
+  add(updates, mine_update)
+
+  add(draw_entities, arrow_function(foreach,agents,agent_draw))
+  add(draw_entities, mine_draw)
+  add(draw_hovers, arrow_function(foreach,hovered_agents,agent_hover_draw))
+  add(draw_selections, arrow_function(foreach,selected_agents,agent_selected_draw))
 end
 
 function _update60()
   --mouse
   mouse_update()
 
-  --selection
-  hovered_agents={}
-  local _selectable={}
+  clear(hovered_agents)
 
-  for _i=1,#agents do
-    local _agent=agents[_i]
-    local _agent_aabb=agent_aabb(_agent,4)
-
-    if col_aabb_aabb(mouse.selection_aabb,_agent_aabb) then
-      add(_selectable,_agent)
-    end
-  end
-  -- sort by distance to the mouse
-  sort(_selectable, function(_a, _b)
-    local _a_dist=vec2_sqrlen(mouse.pos-_a.pos)
-    local _b_dist=vec2_sqrlen(mouse.pos-_b.pos)
-    if (_a_dist<_b_dist) return -1
-    if (_a_dist>_b_dist) return 1
-    return 0
-  end)
-
-  if #_selectable>0 then
-    if mouse_is_box_selecting() then
-      hovered_agents=_selectable
-    else
-      hovered_agents={_selectable[1]}
-    end
-  end
-  if mouse.released[1] then
-    selected_agents=hovered_agents
-  end
-
-  -- orders
-  if (mouse.pressed[2]) then
-    for _agent in all(selected_agents) do
-      agent_stop_actions(_agent)
-      path = find_path(level, _agent.pos, mouse.pos)
-      if path ~= nil then
-        agent_follow_path(_agent, path, order_speed)
-        sfx(0)
-      end
-    end
-  end
-
-  mine_update()
-
-  -- actions
-  for i=#actions,1,-1 do
-    action_update(actions[i])
-  end
-  
-  -- agents
-  foreach(agents,agent_update)
-
-  
+  do_funcs(collisions)
+  do_funcs(updates)
 end
 
 function _draw()
@@ -103,30 +69,13 @@ function _draw()
   map(level.x,level.y,0,0,level.w,level.h,0x1)
   -- graph_draw_links(level)
 
-
-  -- mine
-  mine_draw()
-
-  -- agents
-  foreach (agents, agent_draw)
-  foreach (hovered_agents, agent_hover_draw)
-  foreach (selected_agents, agent_selected_draw)
+  do_funcs(draw_entities)
+  do_funcs(draw_hovers)
+  do_funcs(draw_selections)
 
   mouse_draw()
 
   -- debug
   draw_log()
 
-  -- if #selected_agents>0 then
-  --   path = find_path(level, selected_agents[1].pos, mouse.pos)
-  -- else
-  --   path = nil
-  -- end
-
-  -- if path~=nil then
-  --   for i=1,#path-1 do
-  --     local _p0, _p1 = path[i], path[i+1]
-  --     line(_p0.x, _p0.y, _p1.x, _p1.y, 12)
-  --   end
-  -- end
 end
