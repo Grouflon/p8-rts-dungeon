@@ -13,44 +13,6 @@ hovered_agents={}
 selected_agents={}
 level=nil
 
---AGENT ACTIONS
-function agent_goto(_agent,_target,_speed)
-  local _goto_action={
-    start=function(_action,_target,_speed)
-      local _a=_action.agents[1]
-      _speed=_speed or wander_speed
-      _target=vec2(_target)
-      local _origin=vec2(_a.pos)
-      local _traj=_target-_a.pos
-      local _timer=0
-      local _time=0
-      if (_speed>0) _time=vec2_len(_traj)/_speed
-      local _t=0
-      if (_time<=0) _t=1
-      repeat
-        _t=_timer/_time
-        _a.pos=vec2_lerp(_origin,_target,_t)
-        _timer+=1
-        yield()
-      until (_t>=1)
-    end
-  }
-  action_start(_goto_action,_agent,_target,_speed)
-end
-
-function agent_wait(_agent,_time)
-  local _wait_action={
-    start=function(_action,_time)
-      local _timer=_time
-      while(_timer>0) do
-        _timer-=1
-        yield()
-      end
-    end
-  }
-  action_start(_wait_action,_agent,_time)
-end
-
 -- SYSTEM
 function _init()
   printh("")
