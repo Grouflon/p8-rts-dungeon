@@ -16,6 +16,7 @@ return _a
 end
 
 --AGENT ACTIONS
+--AGENT ACTIONS
 function agent_goto(_agent,_target,_speed)
   local _goto_action={
     start=function(_action,_target,_speed)
@@ -40,6 +41,30 @@ function agent_goto(_agent,_target,_speed)
   action_start(_goto_action,_agent,_target,_speed)
 end
 
+function agent_follow_path(_agent,_path,_speed)
+  local _goto_action={
+    start=function(_action,_path,_speed)
+      local _dist=0
+      for _i=1,#_path-1 do
+        local _start, _end = _path[_i], _path[_i+1]
+        assert(_start ~= nil)
+        assert(_end ~= nil)
+        local _traj=_end-_start
+        local _len=vec2_len(_traj)
+        local _dir=vec2_normalized(_traj)
+        while _dist < _len do
+          _agent.pos=_start+_dir*_dist
+          yield()
+          _dist+=_speed
+        end
+        _dist-=_len
+      end
+      _agent.pos=_path[#_path]
+    end
+  }
+  action_start(_goto_action,_agent,_path,_speed)
+end
+
 function agent_wait(_agent,_time)
   local _wait_action={
     start=function(_action,_time)
@@ -52,6 +77,7 @@ function agent_wait(_agent,_time)
   }
   action_start(_wait_action,_agent,_time)
 end
+
 
 function agent_stop_actions(_a)
   for i=#_a.actions,1,-1 do

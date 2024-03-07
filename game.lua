@@ -3,7 +3,7 @@ skin_color={4,15}
 clothes_color={2,3,8,10,11,12,14}
 
 agent_count=4
-order_speed=0.3
+order_speed=0.4
 
 --variables
 agents={}
@@ -12,6 +12,7 @@ actions={}
 hovered_agents={}
 selected_agents={}
 level=nil
+
 
 -- SYSTEM
 function _init()
@@ -24,11 +25,11 @@ function _init()
   -- spawn point
   for _n in all(level.nodes) do
     if _n.sprite==3 then
-      local _world_pos=_n.pos*8
-      add(agents,agent(1,_world_pos+vec2(3,3)))
-      add(agents,agent(2,_world_pos+vec2(6,3)))
-      add(agents,agent(3,_world_pos+vec2(6,6)))
-      add(agents,agent(4,_world_pos+vec2(3,6)))
+      local _world_pos=_n.pos
+      add(agents,agent(1,_world_pos+vec2(-1,-1)))
+      add(agents,agent(2,_world_pos+vec2(2,-1)))
+      add(agents,agent(3,_world_pos+vec2(2,2)))
+      add(agents,agent(4,_world_pos+vec2(-1,2)))
       break
     end
   end
@@ -72,11 +73,14 @@ function _update60()
 
   -- orders
   if (mouse.pressed[2]) then
-    foreach(selected_agents, function(_agent)
+    for _agent in all(selected_agents) do
       agent_stop_actions(_agent)
-      agent_goto(_agent,mouse.pos,order_speed)
-      sfx(0)
-    end)
+      path = find_path(level, _agent.pos, mouse.pos)
+      if path ~= nil then
+        agent_follow_path(_agent, path, order_speed)
+        sfx(0)
+      end
+    end
   end
 
   mine_update()
@@ -88,6 +92,8 @@ function _update60()
   
   -- agents
   foreach(agents,agent_update)
+
+  
 end
 
 function _draw()
@@ -110,4 +116,17 @@ function _draw()
 
   -- debug
   draw_log()
+
+  -- if #selected_agents>0 then
+  --   path = find_path(level, selected_agents[1].pos, mouse.pos)
+  -- else
+  --   path = nil
+  -- end
+
+  -- if path~=nil then
+  --   for i=1,#path-1 do
+  --     local _p0, _p1 = path[i], path[i+1]
+  --     line(_p0.x, _p0.y, _p1.x, _p1.y, 12)
+  --   end
+  -- end
 end
