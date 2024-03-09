@@ -47,8 +47,10 @@ function _update60()
     local _agent=agents[_i]
     local _agent_aabb=agent_aabb(_agent,4)
 
-    if col_aabb_aabb(mouse.selection_aabb,_agent_aabb) then
-      add(_selectable,_agent)
+    if (_agent.is_alive) then
+      if col_aabb_aabb(mouse.selection_aabb,_agent_aabb) then
+        add(_selectable,_agent)
+      end
     end
   end
   -- sort by distance to the mouse
@@ -83,7 +85,7 @@ function _update60()
     end
   end
 
-  mine_update()
+  mine_update(mine)
 
   -- actions
   for i=#actions,1,-1 do
@@ -92,8 +94,6 @@ function _update60()
   
   -- agents
   foreach(agents,agent_update)
-
-  
 end
 
 function _draw()
@@ -105,7 +105,7 @@ function _draw()
 
 
   -- mine
-  mine_draw()
+  mine_draw(mine)
 
   -- agents
   foreach (agents, agent_draw)

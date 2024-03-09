@@ -10,6 +10,7 @@ function agent(_id,_pos)
       rnd(clothes_color)
     },
     actions={},
+    is_alive=true
 -- mode=0
 }
 return _a
@@ -106,10 +107,21 @@ function agent_update(_a)
 -- end
 end
 
+function agent_kill(_a)
+  _a.is_alive = false
+  del(selected_agents,_a)
+  agent_stop_actions(_a)
+end
+
 function agent_draw(_a)
-  pset(_a.pos.x,_a.pos.y,_a.colors[2])
-  pset(_a.pos.x,_a.pos.y-1,_a.colors[1])
-  pset(_a.pos.x+1,_a.pos.y,1)
+  if(_a.is_alive) then
+    pset(_a.pos.x,_a.pos.y,_a.colors[2]) --body
+    pset(_a.pos.x,_a.pos.y-1,_a.colors[1]) --head
+    pset(_a.pos.x+1,_a.pos.y,1) -- shadow
+  else
+    pset(_a.pos.x,_a.pos.y,_a.colors[2])--body
+    pset(_a.pos.x-1,_a.pos.y, 8)--head
+  end
 end
 
 function agent_hover_draw(_a)

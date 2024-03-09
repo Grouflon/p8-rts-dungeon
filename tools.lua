@@ -167,3 +167,16 @@ function contains(_t,_o)
   end
   return false
 end
+
+function clear(_t)
+  for i=#_t,1,-1 do
+    del(_t,_t[i])
+  end
+end
+
+function apply(_t,_t2)
+  clear(_t)
+  for _element in all(_t2) do
+    add(_t,_element)
+  end
+end
