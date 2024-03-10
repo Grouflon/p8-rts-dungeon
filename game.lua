@@ -5,6 +5,7 @@ clothes_color={2,3,8,10,11,12,14}
 order_speed=0.4
 
 --variables
+mines={}
 agents={}
 actions={}
 level=nil
@@ -25,7 +26,12 @@ function _init()
       add(agents,agent(2,_world_pos+vec2(2,-1)))
       add(agents,agent(3,_world_pos+vec2(2,2)))
       add(agents,agent(4,_world_pos+vec2(-1,2)))
-      break
+    elseif(_n.sprite!=2 and rnd(20) >= 10) then
+      local x = rnd(8)-4
+      local y = rnd(8)-4
+      if (rnd(1)>0) x*=-1
+      if (rnd(1)>0) y*=-1
+      add(mines, mine(_n.pos+vec2(x, y)))
     end
   end
 end
@@ -49,8 +55,7 @@ function _update60()
     end
   end
 
-  mine_update(mine)
-
+  foreach(mines,mine_update)
   -- actions
   for i=#actions,1,-1 do
     action_update(actions[i])
@@ -71,7 +76,7 @@ function _draw()
 
 
   -- mine
-  mine_draw(mine)
+  foreach (mines, mine_draw)
 
   -- agents
   foreach (selection.hovered_agents, agent_hover_draw)

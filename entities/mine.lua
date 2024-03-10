@@ -1,15 +1,17 @@
-mine={}
-mine.pos=vec2()
-mine.pos.x=50
-mine.pos.y=50
-mine.radius=1
-mine.timer=0
-mine.time=0
-mine.isstart=true
-mine.isactived=false
-mine.isboom=false
-mine.hasboom=false
-mine.explosion_radius=1
+function mine(_p)
+  local _mine={
+    pos=_p,
+    radius=1,
+    timer=0,
+    time=0,
+    isstart=true,
+    isactived=false,
+    isboom=false,
+    hasboom=false,
+    explosion_radius=1
+  }
+  return _mine
+end
 
 function mine_update(_m)
   if(_m.isboom) then
@@ -35,6 +37,7 @@ function mine_update(_m)
       end
       _m.isboom=true
       _m.isactived=false
+      sfx(1)
     end
   end
 end
