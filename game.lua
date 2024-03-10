@@ -6,7 +6,6 @@ order_speed=0.4
 bullet_speed=2
 
 --variables
-mines={}
 actions={}
 level=nil
 
@@ -30,12 +29,12 @@ function _init()
     elseif _n.sprite==4 then
       entity_add(turret(_n.pos+vec2(4,4)))
     -- mines
-    elseif(_n.sprite~=2 and rnd(20) >= 18) then
+    elseif(_n.sprite==5) then
       local x = rnd(8)-4
       local y = rnd(8)-4
       if (rnd(1)>0) x*=-1
       if (rnd(1)>0) y*=-1
-      add(mines, mine(_n.pos+vec2(x, y)))
+      entity_add(mine(_n.pos+vec2(x, y)))
     end
   end
 end
@@ -61,7 +60,6 @@ function _update60()
 
   entities_update()
 
-  foreach(mines,mine_update)
   -- actions
   for i=#actions,1,-1 do
     action_update(actions[i])
@@ -85,9 +83,6 @@ function _draw()
   foreach (selection.selected_agents, agent_selected_draw)
 
   entities_draw()
-
-  -- mine
-  foreach (mines, mine_draw)
 
   selection_draw()
   mouse_draw()

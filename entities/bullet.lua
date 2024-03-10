@@ -11,6 +11,13 @@ function bullet(_pos, _velocity)
     ) then
       entity_remove(_bullet)
       return
+    else
+      for _a in all(agents) do
+        if (vec2_len(_a.pos-_bullet.pos) < 1) then
+          agent_kill(_a)
+          entity_remove(_bullet)
+        end
+      end
     end
   end
 

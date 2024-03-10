@@ -6,7 +6,6 @@ function agent(_id,_pos)
   srand(_seed)
   _e.id=_id
   _e.seed=_seed
-  _e.pos=vec2(_pos)
   _e.colors={
     rnd(skin_color),
     rnd(clothes_color)
