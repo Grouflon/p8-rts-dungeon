@@ -16,7 +16,6 @@ function agent(_id,_pos)
 end
 
 --AGENT ACTIONS
---AGENT ACTIONS
 function agent_goto(_agent,_target,_speed)
   local _goto_action={
     start=function(_action,_target,_speed)

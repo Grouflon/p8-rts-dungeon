@@ -6,6 +6,7 @@ order_speed=0.4
 bullet_speed=2
 
 --variables
+mines={}
 agents={}
 turrets={}
 bullets={}
@@ -50,8 +51,11 @@ function turret_update(_turret)
 
   -- drop invalid target
   if _turret.target ~= nil then
-    if (not _turret.target.is_alive) _turret.target = nil
-    if (vec2_len(_turret.target.pos - _turret.pos) > _turret.range) _turret.target = nil
+    if not _turret.target.is_alive then
+      _turret.target = nil
+    elseif vec2_len(_turret.target.pos - _turret.pos) > _turret.range then 
+      _turret.target = nil
+    end
   end
 
   -- pick target
@@ -101,12 +105,16 @@ function _init()
       add(agents,agent(2,_world_pos+vec2(2,-1)))
       add(agents,agent(3,_world_pos+vec2(2,2)))
       add(agents,agent(4,_world_pos+vec2(-1,2)))
-      break
-    end
-
-    -- turret
-    if _n.sprite==4 then
+    -- turrets
+    elseif _n.sprite==4 then
       add(turrets,turret(_n.pos+vec2(4,4)))
+    -- mines
+    elseif(_n.sprite~=2 and rnd(20) >= 10) then
+      local x = rnd(8)-4
+      local y = rnd(8)-4
+      if (rnd(1)>0) x*=-1
+      if (rnd(1)>0) y*=-1
+      add(mines, mine(_n.pos+vec2(x, y)))
     end
   end
 end
@@ -130,8 +138,7 @@ function _update60()
     end
   end
 
-  mine_update(mine)
-
+  foreach(mines,mine_update)
   -- actions
   for i=#actions,1,-1 do
     action_update(actions[i])
@@ -157,7 +164,7 @@ function _draw()
 
 
   -- mine
-  mine_draw(mine)
+  foreach (mines, mine_draw)
 
   -- agents
   foreach (selection.hovered_agents, agent_hover_draw)
