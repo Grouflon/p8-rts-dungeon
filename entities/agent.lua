@@ -1,18 +1,41 @@
+agents = {}
+
 function agent(_id,_pos)
+  local _e = entity(_pos)
   local _seed=rnd()
   srand(_seed)
-  local _a={
-    id=_id,
-    seed=_seed,
-    pos=vec2(_pos),
-    colors={
-      rnd(skin_color),
-      rnd(clothes_color)
-    },
-    actions={},
-    is_alive=true
+  _e.id=_id
+  _e.seed=_seed
+  _e.pos=vec2(_pos)
+  _e.colors={
+    rnd(skin_color),
+    rnd(clothes_color)
   }
-  return _a
+  _e.actions={}
+  _e.is_alive=true
+
+  _e.added = function(_agent)
+    add(agents, _agent)
+  end
+
+  _e.removed = function(_agent)
+    del(agents, _agent)
+  end
+
+  _e.update = function(_agent)
+  end
+
+  _e.draw = function(_agent)
+    if(_agent.is_alive) then
+      pset(_agent.pos.x,_agent.pos.y,_agent.colors[2]) --body
+      pset(_agent.pos.x,_agent.pos.y-1,_agent.colors[1]) --head
+    else
+      pset(_agent.pos.x,_agent.pos.y,_agent.colors[2])--body
+      pset(_agent.pos.x-1,_agent.pos.y, 8)--head
+    end
+  end
+
+  return _e
 end
 
 --AGENT ACTIONS
@@ -94,17 +117,6 @@ function agent_aabb(_a,_margin)
   }
 end
 
-function agent_update(_a)
--- if (#_a.actions==0) then
---  if (_a.mode==0) then
---      agent_wait(_a,rnd_range(wait_range[1],wait_range[2]))
---  else
---      agent_goto(_a,rnd_screenpos(30))
---  end
---  _a.mode=(_a.mode+1)%2
--- end
-end
-
 function agent_kill(_a)
   _a.is_alive = false
   del(selection.selected_agents,_a)
@@ -114,16 +126,6 @@ end
 function agent_draw_shadow(_a)
   if(_a.is_alive) then
     pset(_a.pos.x+1,_a.pos.y,1) -- shadow
-  end
-end
-
-function agent_draw(_a)
-  if(_a.is_alive) then
-    pset(_a.pos.x,_a.pos.y,_a.colors[2]) --body
-    pset(_a.pos.x,_a.pos.y-1,_a.colors[1]) --head
-  else
-    pset(_a.pos.x,_a.pos.y,_a.colors[2])--body
-    pset(_a.pos.x-1,_a.pos.y, 8)--head
   end
 end
 

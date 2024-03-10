@@ -143,9 +143,7 @@ function find_path(_graph, _start, _end)
     end
 
     sort(_open_list, function(_a,_b)
-      if (_a.h<_b.h) return -1
-      if (_a.h>_b.h) return 1
-      return 0
+      return compare(_a.h, _b.h)
     end)
   end
 

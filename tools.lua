@@ -143,12 +143,14 @@ function swap(_t,_a,_b)
   _t[_a]=_temp
 end
 
+function compare(_a, _b)
+  if (_a<_b) return -1
+  if (_a>_b) return 1
+  return 0
+end
+
 function sort(_t,_f)
-  _f = _f or function(_a, _b)
-    if (_a<_b) return -1
-    if (_a>_b) return 1
-    return 0
-  end
+  _f = _f or compare
   local _len=#_t
   for _i=2,_len do
     for _j=_i,2,-1 do

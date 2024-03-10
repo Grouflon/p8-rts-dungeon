@@ -50,9 +50,7 @@ function selection_update()
   sort(_selectable, function(_a, _b)
     local _a_dist=vec2_sqrlen(mouse.pos-_a.pos)
     local _b_dist=vec2_sqrlen(mouse.pos-_b.pos)
-    if (_a_dist<_b_dist) return -1
-    if (_a_dist>_b_dist) return 1
-    return 0
+    return compare(_a_dist, _b_dist)
   end)
 
   if #_selectable>0 then

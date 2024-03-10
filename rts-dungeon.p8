@@ -4,8 +4,11 @@ __lua__
 #include tools.lua
 #include mouse.lua
 #include pathfinding.lua
+#include entities.lua
 #include entities/mine.lua
-#include agent.lua
+#include entities/bullet.lua
+#include entities/turret.lua
+#include entities/agent.lua
 #include action.lua
 #include selection.lua
 #include game.lua
