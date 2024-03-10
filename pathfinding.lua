@@ -91,21 +91,25 @@ function graph_draw_links(_graph)
   end
 end
 
+function graph_is_wall(_graph, _pos)
+  return graph_get_node(_graph,_pos).subgraph < 0
+end
+
 function is_line_walkable(_graph, _start, _end, _subgraph) -- add radius?
-    local _traj = _end-_start
-    local _dir = vec2_normalized(_traj)
-    local _len = vec2_len(_traj)
-    local _step=4
-    local _progress=0
-    while _progress < _len do
-      _progress=min(_len,_progress+_step)
-      local _p = _start+_dir*_progress
-      -- pset(_p.x, _p.y, 13)
-      local _n= graph_get_node(_graph, _p)
-      if (_n.subgraph ~= _subgraph) return false
-    end
-    return true
+  local _traj = _end-_start
+  local _dir = vec2_normalized(_traj)
+  local _len = vec2_len(_traj)
+  local _step=4
+  local _progress=0
+  while _progress < _len do
+    _progress=min(_len,_progress+_step)
+    local _p = _start+_dir*_progress
+    -- pset(_p.x, _p.y, 13)
+    local _n= graph_get_node(_graph, _p)
+    if (_n.subgraph ~= _subgraph) return false
   end
+  return true
+end
 
 function find_path(_graph, _start, _end)
   local _start_node = graph_get_node(_graph, _start)

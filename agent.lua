@@ -11,9 +11,8 @@ function agent(_id,_pos)
     },
     actions={},
     is_alive=true
--- mode=0
-}
-return _a
+  }
+  return _a
 end
 
 --AGENT ACTIONS
