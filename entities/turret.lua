@@ -23,10 +23,12 @@ function turret(_pos)
       local _closest_sqrdist = 0
       local _sqr_range = _turret.range*_turret.range
       for _agent in all(agents) do
-        local _sqrdist = vec2_sqrlen(_turret.pos-_agent.pos)
-        if _sqrdist < _sqr_range and (_turret.target == nil or _sqrdist < _closest_sqrdist) then
-          _turret.target = _agent
-          _closest_sqrdist = _sqrdist
+        if (_agent.is_alive) then
+          local _sqrdist = vec2_sqrlen(_turret.pos-_agent.pos)
+          if _sqrdist < _sqr_range and (_turret.target == nil or _sqrdist < _closest_sqrdist) then
+            _turret.target = _agent
+            _closest_sqrdist = _sqrdist
+          end
         end
       end
     end
