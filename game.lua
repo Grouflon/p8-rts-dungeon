@@ -26,7 +26,7 @@ function _init()
       add(agents,agent(2,_world_pos+vec2(2,-1)))
       add(agents,agent(3,_world_pos+vec2(2,2)))
       add(agents,agent(4,_world_pos+vec2(-1,2)))
-    elseif(_n.sprite!=2 and rnd(20) >= 10) then
+    elseif(_n.sprite!=2 and rnd(20) >= 17) then
       local x = rnd(8)-4
       local y = rnd(8)-4
       if (rnd(1)>0) x*=-1
