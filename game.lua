@@ -2,17 +2,12 @@
 skin_color={4,15}
 clothes_color={2,3,8,10,11,12,14}
 
-agent_count=4
 order_speed=0.4
 
 --variables
 agents={}
 actions={}
-
-hovered_agents={}
-selected_agents={}
 level=nil
-
 
 -- SYSTEM
 function _init()
@@ -39,43 +34,12 @@ function _update60()
   --mouse
   mouse_update()
 
-  --selection
-  hovered_agents={}
-  local _selectable={}
-
-  for _i=1,#agents do
-    local _agent=agents[_i]
-    local _agent_aabb=agent_aabb(_agent,4)
-
-    if (_agent.is_alive) then
-      if col_aabb_aabb(mouse.selection_aabb,_agent_aabb) then
-        add(_selectable,_agent)
-      end
-    end
-  end
-  -- sort by distance to the mouse
-  sort(_selectable, function(_a, _b)
-    local _a_dist=vec2_sqrlen(mouse.pos-_a.pos)
-    local _b_dist=vec2_sqrlen(mouse.pos-_b.pos)
-    if (_a_dist<_b_dist) return -1
-    if (_a_dist>_b_dist) return 1
-    return 0
-  end)
-
-  if #_selectable>0 then
-    if mouse_is_box_selecting() then
-      hovered_agents=_selectable
-    else
-      hovered_agents={_selectable[1]}
-    end
-  end
-  if mouse.released[1] then
-    selected_agents=hovered_agents
-  end
+  -- selection
+  selection_update()
 
   -- orders
   if (mouse.pressed[2]) then
-    for _agent in all(selected_agents) do
+    for _agent in all(selection.selected_agents) do
       agent_stop_actions(_agent)
       path = find_path(level, _agent.pos, mouse.pos)
       if path ~= nil then
@@ -100,6 +64,8 @@ function _draw()
   local _bg_color=5
   cls(_bg_color)
 
+  foreach (agents, agent_draw_shadow)
+
   map(level.x,level.y,0,0,level.w,level.h,0x1)
   -- graph_draw_links(level)
 
@@ -108,10 +74,11 @@ function _draw()
   mine_draw(mine)
 
   -- agents
+  foreach (selection.hovered_agents, agent_hover_draw)
+  foreach (selection.selected_agents, agent_selected_draw)
   foreach (agents, agent_draw)
-  foreach (hovered_agents, agent_hover_draw)
-  foreach (selected_agents, agent_selected_draw)
 
+  selection_draw()
   mouse_draw()
 
   -- debug

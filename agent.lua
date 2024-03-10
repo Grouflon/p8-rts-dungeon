@@ -109,15 +109,20 @@ end
 
 function agent_kill(_a)
   _a.is_alive = false
-  del(selected_agents,_a)
+  del(selection.selected_agents,_a)
   agent_stop_actions(_a)
+end
+
+function agent_draw_shadow(_a)
+  if(_a.is_alive) then
+    pset(_a.pos.x+1,_a.pos.y,1) -- shadow
+  end
 end
 
 function agent_draw(_a)
   if(_a.is_alive) then
     pset(_a.pos.x,_a.pos.y,_a.colors[2]) --body
     pset(_a.pos.x,_a.pos.y-1,_a.colors[1]) --head
-    pset(_a.pos.x+1,_a.pos.y,1) -- shadow
   else
     pset(_a.pos.x,_a.pos.y,_a.colors[2])--body
     pset(_a.pos.x-1,_a.pos.y, 8)--head
@@ -144,7 +149,7 @@ function agent_selected_draw(_agent)
   local _hw=4
   local _hh=3
   color(6)
-  if (contains(hovered_agents,_agent)) color(7)
+  if (contains(selection.hovered_agents,_agent)) color(7)
   oval(
     _agent.pos.x-_hw,
     _agent.pos.y-_hh,
