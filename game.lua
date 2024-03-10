@@ -30,7 +30,7 @@ function _init()
     elseif _n.sprite==4 then
       entity_add(turret(_n.pos+vec2(4,4)))
     -- mines
-    elseif(_n.sprite~=2 and rnd(20) >= 10) then
+    elseif(_n.sprite~=2 and rnd(20) >= 18) then
       local x = rnd(8)-4
       local y = rnd(8)-4
       if (rnd(1)>0) x*=-1
