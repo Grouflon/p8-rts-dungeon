@@ -35,6 +35,11 @@ function _init()
       if (rnd(1)>0) x*=-1
       if (rnd(1)>0) y*=-1
       entity_add(mine(_n.pos+vec2(x, y)))
+    -- tesla
+    elseif(_n.sprite==6) then
+      entity_add(tesla(_n.pos))
+    -- snake
+    elseif(_n.sprite==7) then
      -- entity_add(snake(_n.pos))
     end
   end

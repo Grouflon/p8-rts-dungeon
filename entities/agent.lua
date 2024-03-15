@@ -5,6 +5,7 @@ function agent(_id,_pos)
   local _seed=rnd()
   srand(_seed)
   _e.id=_id
+  _e.name="agent"
   _e.seed=_seed
   _e.colors={
     rnd(skin_color),
@@ -19,6 +20,15 @@ function agent(_id,_pos)
 
   _e.removed = function(_agent)
     del(agents, _agent)
+  end
+
+  _e.collide = function(_agent, _entities)
+    for _entity in all(_entities) do
+      if (_entity.name ~= nil and _entity.name == "bullet") then
+        agent_kill(_agent)
+        return
+      end
+    end
   end
 
   _e.update = function(_agent)

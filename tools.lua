@@ -69,6 +69,9 @@ setmetatable(_v, vec2_mt)
 return _v
 end
 
+function vec2_cross(_v1, _v2)
+  return abs(_v1.x * _v2.y - _v1.y * _v2.x)
+end
 function vec2_dot(_v1, _v2)
   return _v1.x * _v2.x + _v1.y * _v2.y
 end

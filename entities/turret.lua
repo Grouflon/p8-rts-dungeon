@@ -36,7 +36,7 @@ function turret(_pos)
     -- shoot
     if _turret.target ~= nil and _turret.cooldown_timer == 0 then
       local _dir = vec2_normalized(_turret.target.pos - _turret.pos)
-      entity_add(bullet(_turret.pos, _dir*bullet_speed))
+      entity_add(bullet(_turret.pos, _dir*bullet_speed, _turret))
       _turret.cooldown_timer = _turret.cooldown
     end
   end
