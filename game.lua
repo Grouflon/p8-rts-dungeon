@@ -35,6 +35,7 @@ function _init()
       if (rnd(1)>0) x*=-1
       if (rnd(1)>0) y*=-1
       entity_add(mine(_n.pos+vec2(x, y)))
+     -- entity_add(snake(_n.pos))
     end
   end
 end

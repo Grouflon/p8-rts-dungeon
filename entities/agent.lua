@@ -12,7 +12,7 @@ function agent(_id,_pos)
   }
   _e.actions={}
   _e.is_alive=true
-
+  
   _e.added = function(_agent)
     add(agents, _agent)
   end

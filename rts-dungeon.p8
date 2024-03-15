@@ -9,6 +9,7 @@ __lua__
 #include entities/bullet.lua
 #include entities/turret.lua
 #include entities/agent.lua
+#include entities/snake.lua
 #include action.lua
 #include selection.lua
 #include game.lua
